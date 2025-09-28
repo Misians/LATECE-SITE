@@ -1,0 +1,52 @@
+{
+  "name": "latece-portal",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^7.0.1",
+    "@fortawesome/free-brands-svg-icons": "^7.0.1",
+    "@fortawesome/free-solid-svg-icons": "^7.0.1",
+    "@fortawesome/vue-fontawesome": "^3.1.2",
+    "@nuxtjs/color-mode": "^3.5.2",
+    "@nuxtjs/google-fonts": "^3.2.0",
+    "@nuxtjs/i18n": "^10.1.0",
+    "@nuxtjs/security": "^0.0.0",
+    "@pinia/nuxt": "^0.11.2",
+    "@vueuse/core": "^13.9.0",
+    "axios": "^1.12.2",
+    "bcryptjs": "^3.0.2",
+    "fontawesome": "^5.6.3",
+    "jsonwebtoken": "^9.0.2",
+    "nuxt": "^4.1.2",
+    "nuxt-icon": "^1.0.0-beta.7",
+    "nuxt-security": "^2.4.0",
+    "pg": "^8.16.3",
+    "pinia": "^3.0.3",
+    "pug": "^3.0.3",
+    "sass": "^1.93.2",
+    "vue": "^3.5.22",
+    "vue-router": "^4.5.1",
+    "vue-toastification": "^2.0.0-rc.5",
+    "vue-tsc": "^3.0.8",
+    "vue3-carousel": "^0.16.0",
+    "vue3-lottie": "^3.3.1",
+    "vue3-marquee": "^4.2.2",
+    "zod": "^4.1.11"
+  },
+  "devDependencies": {
+    "@nuxt/devtools": "^2.6.5",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/pg": "^8.15.5",
+    "@types/pug": "^2.0.10",
+    "@types/sass": "^1.43.1",
+    "typescript": "^5.9.2"
+  }
+}
