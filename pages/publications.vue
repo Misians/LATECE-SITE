@@ -259,7 +259,7 @@ $focus-ring-color: rgba(29, 138, 159, 0.4);
   &.btn-primary {
     background-color: $primary-blue;
     color: white;
-    &:hover { background-color: darken($primary-blue, 10%); }
+    &:hover { background-color: $primary-blue; }
   }
 
   &.btn-outline {

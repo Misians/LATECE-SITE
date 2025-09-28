@@ -10,6 +10,14 @@
     "login": "Entrar",
     "logout": "Sair"
   },
+  "auth": {
+    "username": "Nome de usuário",
+    "usernamePlaceholder": "Digite seu nome de usuário",
+    "password": "Senha",
+    "passwordPlaceholder": "Digite sua senha",
+    "login": "Entrar",
+    "loggingIn": "Entrando..."
+  },
   "home": {
     "title": "Portal LATECE",
     "subtitle": "Laboratório de Tecnologia Assistiva",

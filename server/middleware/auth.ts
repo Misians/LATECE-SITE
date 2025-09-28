@@ -9,6 +9,10 @@ export default defineEventHandler(async (event) => {
     const authHeader = getHeader(event, 'Authorization');
     const token = authHeader?.split(' ')[1];
 
+    if (url.startsWith('/api/news') && event.method === 'GET') {
+      return; // Não faz a verificação de token e continua para a rota.
+    }
+
     if (!token) {
       throw createError({ statusCode: 401, statusMessage: 'Token de acesso não fornecido.' });
     }

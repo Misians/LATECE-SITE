@@ -13,7 +13,7 @@ export interface News {
   status: NewsStatus;
   category: string;      // <-- ADICIONADO
   featured: boolean;
-  tags: string[];        // <-- ADICIONADO
+  tags?: string[];        // <-- ADICIONADO
   publishedAt?: string;
   createdAt: string;
   updatedAt: string;

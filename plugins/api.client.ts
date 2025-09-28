@@ -1,41 +1,40 @@
+// plugins/api.client.ts
+
+import { ofetch } from 'ofetch'
 import { useAuthStore } from '@/stores/auth'
 
-export default defineNuxtPlugin(() => {
-  const config = useRuntimeConfig()
-  
-  const api = $fetch.create({
-    baseURL: config.public.apiBase,
-    onRequest({ request, options }) {
-      // Add auth token if available
-      if (process.client) {
-        const token = localStorage.getItem('auth_token')
-        if (token) {
-          // Create a new Headers object
-          const headers = new Headers(options.headers)
-          // Set the Authorization header
-          headers.set('Authorization', `Bearer ${token}`)
-          // Assign the new headers object back to the options
-          options.headers = headers
-        }
+export default defineNuxtPlugin((_nuxtApp) => {
+  const api = ofetch.create({
+    baseURL: '',
+
+    async onRequest({ options }) {
+      const authStore = useAuthStore()
+      if (authStore.token) {
+        const headers = new Headers(options.headers)
+        headers.set('Authorization', `Bearer ${authStore.token}`)
+        options.headers = headers
       }
     },
-    onRequestError({ request, error }) {
-      console.error('API Request Error:', error)
-    },
-    onResponseError({ request, response, options }) {
-      console.error('API Response Error:', response.status, response.statusText)
-      
-      // Handle 401 errors (unauthorized)
-      if (response.status === 401) {
+
+    // ✨ LÓGICA CORRIGIDA AQUI ✨
+    async onResponseError({ request, response, options }) {
+      // Se o erro for 401 e a requisição NÃO for do tipo GET
+      if (response.status === 401 && options.method !== 'GET') {
         const authStore = useAuthStore()
-        authStore.logout()
+        console.error('Token inválido para uma ação protegida. Deslogando...')
+        
+        // Use a action de logout da sua store
+        await authStore.logout() // Supondo que você tenha uma action 'logout'
+
+        // Redireciona para a página de login
+        await navigateTo('/login')
       }
-    }
+    },
   })
-  
+
   return {
     provide: {
-      api
-    }
+      api,
+    },
   }
 })

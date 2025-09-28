@@ -131,7 +131,6 @@ onMounted(() => {
 </script>
 <style scoped lang="scss">
 // Variáveis de Cor (assumindo que você as tenha definidas globalmente)
-$primary-blue: #1D8A9F;
 $light-blue: #64B8D1;
 $gray-100: #f3f4f6;
 $gray-200: #e5e7eb;
@@ -156,7 +155,7 @@ $focus-ring: 0 0 0 2px rgba(96, 165, 250, 0.5);
 .toggle-button {
   width: 3rem;
   height: 3rem;
-  background-color: $primary-blue;
+  background-color: #1D8A9F;
   color: white;
   border-radius: 9999px;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
@@ -201,7 +200,7 @@ $focus-ring: 0 0 0 2px rgba(96, 165, 250, 0.5);
 .panel-title {
   font-size: 1.125rem;
   font-weight: 600;
-  color: $primary-blue;
+  color: #1D8A9F;
 }
 
 .close-button {
@@ -276,11 +275,11 @@ $focus-ring: 0 0 0 2px rgba(96, 165, 250, 0.5);
   }
 
   &.reset {
-    background-color: $primary-blue;
+    background-color: #1D8A9F;
     color: white;
 
     &:hover {
-      background-color: darken($primary-blue, 10%);
+      background-color: #0d515f;
     }
   }
 }
@@ -302,7 +301,7 @@ $focus-ring: 0 0 0 2px rgba(96, 165, 250, 0.5);
   gap: 0.5rem;
 
   &:hover {
-    background-color: $primary-blue;
+    background-color: #1D8A9F;
   }
 
   :deep(svg) {

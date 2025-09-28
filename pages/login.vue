@@ -21,7 +21,6 @@
             <div class="password-input">
               <input class="form-control" id="password" v-model="loginForm.password" :type="showPassword ? 'text' : 'password'" :placeholder="$t('auth.passwordPlaceholder')" required :disabled="isLoading" :class="{ 'is-invalid': errors.password }" />
               <button class="password-toggle" type="button" @click="togglePasswordVisibility" :aria-label="showPassword ? 'Ocultar senha' : 'Mostrar senha'">
-                 <Icon :name="showPassword ? 'mdi:eye-off' : 'mdi:eye'" />
               </button>
             </div>
             <div class="error-message" v-if="errors.password">{{ errors.password }}</div>

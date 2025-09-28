@@ -1,47 +1,55 @@
-// server/api/news/index.get.ts
 import { query } from '~/server/utils/db'
-import type { News } from '~/types'
 
 export default defineEventHandler(async (event) => {
-  // Pega os parâmetros da URL
-  const queryParams = getQuery(event)
-  
-  const page = parseInt(queryParams.page as string || '1')
-  const limit = parseInt(queryParams.limit as string || '9')
-  const search = queryParams.search as string || ''
-  const category = queryParams.category as string || ''
-  
+  // Pega os parâmetros da URL (ex: /api/news?page=1&limit=10)
+  const q = getQuery(event)
+
+  const page = parseInt(q.page as string || '1', 10)
+  const limit = parseInt(q.limit as string || '10', 10)
   const offset = (page - 1) * limit
 
-  // Constrói a consulta SQL dinamicamente
-  let baseQuery = 'FROM news WHERE status = \'published\''
-  const params = []
-  let paramIndex = 1
-
-  if (search) {
-    baseQuery += ` AND (title ILIKE $${paramIndex} OR content ILIKE $${paramIndex})`
-    params.push(`%${search}%`)
-    paramIndex++
+  // Monta a query SQL dinamicamente
+  const params: any[] = []
+  let whereClauses: string[] = []
+  
+  // Filtro por notícias em destaque (featured)
+  if (q.featured === 'true') {
+    whereClauses.push(`featured = true`)
+    whereClauses.push(`status = 'published'`) // Destaques devem estar publicados
+  }
+  
+  // Filtro por busca (search)
+  if (q.search) {
+    params.push(`%${q.search}%`)
+    whereClauses.push(`title ILIKE $${params.length}`)
+  }
+  
+  // Filtro por categoria
+  if (q.category) {
+    params.push(q.category)
+    whereClauses.push(`category = $${params.length}`)
   }
 
-  if (category) {
-    baseQuery += ` AND category = $${paramIndex}`
-    params.push(category)
-    paramIndex++
-  }
+  const whereString = whereClauses.length > 0 ? `WHERE ${whereClauses.join(' AND ')}` : ''
 
-  // Consulta para obter o número total de itens (para paginação)
-  const countResult = await query(`SELECT COUNT(*) ${baseQuery}`, params)
-  const total = parseInt(countResult.rows[0].count)
+  // --- Query para contar o total de itens ---
+  const countQuery = `SELECT COUNT(*) FROM news ${whereString}`
+  const countResult = await query(countQuery, params)
+  const total = parseInt(countResult.rows[0].count, 10)
 
-  // Consulta para obter os itens da página atual
-  const dataResult = await query(
-    `SELECT * ${baseQuery} ORDER BY created_at DESC LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`,
-    [...params, limit, offset]
-  )
-
+  // --- Query para buscar os dados com paginação e limite ---
+  const dataParams = [...params, limit, offset]
+  const dataQuery = `
+    SELECT * FROM news 
+    ${whereString} 
+    ORDER BY "published_at" DESC, "created_at" DESC 
+    LIMIT $${dataParams.length - 1} OFFSET $${dataParams.length}
+  `
+  const dataResult = await query(dataQuery, dataParams)
+  
+  // Retorna os dados no formato que o frontend espera
   return {
-    data: dataResult.rows as News[],
+    data: dataResult.rows,
     total,
   }
 })

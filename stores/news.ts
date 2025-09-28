@@ -82,22 +82,22 @@ export const useNewsStore = defineStore('news', {
      * Busca uma única notícia pelo ID e a armazena em 'currentNews'.
      * @param id - O ID da notícia a ser buscada.
      */
-    async fetchNewsById(id: number) {
-      this.isLoading = true
-      this.error = null
-      this.currentNews = null
-      try {
-        const { $api } = useNuxtApp()
-        this.currentNews = await $api<News>(`/api/news/${id}`)
-        return this.currentNews
-      } catch (error: any) {
-        this.error = error.data?.message || 'Notícia não encontrada'
-        console.error(`Fetch news by ID (${id}) error:`, error)
-        throw error
-      } finally {
-        this.isLoading = false
-      }
-    },
+    // async fetchNewsById(id: number) {
+    //   this.isLoading = true
+    //   this.error = null
+    //   this.currentNews = null
+    //   try {
+    //     const { $api } = useNuxtApp()
+    //     this.currentNews = await $api<News>(`/api/news/${id}`)
+    //     return this.currentNews
+    //   } catch (error: any) {
+    //     this.error = error.data?.message || 'Notícia não encontrada'
+    //     console.error(`Fetch news by ID (${id}) error:`, error)
+    //     throw error
+    //   } finally {
+    //     this.isLoading = false
+    //   }
+    // },
 
     /**
      * Cria uma nova notícia.
@@ -149,6 +149,30 @@ export const useNewsStore = defineStore('news', {
         return { success: false, error: error.data?.message || 'Erro ao atualizar status' };
       } finally {
         this.isLoading = false;
+      }
+    },
+
+    async fetchNewsById(id: number) {
+      this.isLoading = true
+      this.error = null
+      this.currentNews = null
+      try {
+        const { $api } = useNuxtApp()
+        // A API retorna dados em snake_case
+        const rawNewsData = await $api<any>(`/api/news/${id}`)
+
+        // ✨ TRADUZA PARA CAMELCASE ANTES DE USAR ✨
+        const newsData = toCamelCase(rawNewsData) as News
+        
+        this.currentNews = newsData
+        return this.currentNews
+        
+      } catch (error: any) {
+        this.error = error.data?.message || 'Notícia não encontrada'
+        console.error(`Fetch news by ID (${id}) error:`, error)
+        throw error
+      } finally {
+        this.isLoading = false
       }
     },
     async updateNews(id: number, newsData: NewsFormData | FormData) {
