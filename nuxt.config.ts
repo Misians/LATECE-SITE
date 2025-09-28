@@ -16,12 +16,6 @@ export default defineNuxtConfig({
   alias: {
     '@': fileURLToPath(new URL('./', import.meta.url))
   },
- 
-  routeRules: {
-    '/api/**': { 
-      proxy: 'http://localhost:3001/api/**' 
-    }
-  },
 
   // TypeScript configuration
   typescript: {
@@ -38,7 +32,10 @@ export default defineNuxtConfig({
   // Runtime config
   runtimeConfig: {
     public: {
-      apiBase: process.env.API_BASE_URL || 'http://localhost:3001/api',
+      // CORRIGIDO: O apiBase agora é um caminho relativo.
+      // O Nuxt saberá que deve fazer a requisição para seu próprio backend.
+      // Antes: 'http://localhost:3001/api'
+      apiBase: '/api',
       siteName: 'Portal LATECE',
       siteDescription: 'Laboratório de Tecnologia Assistiva - UFRN'
     }
@@ -97,22 +94,20 @@ export default defineNuxtConfig({
         'font-src': ["'self'", 'https:', 'data:'],
         'form-action': ["'self'"],
         'frame-ancestors': ["'none'"],
-        'img-src': ["'self'", 'data:', 'https:', 'http://localhost:3001'],
+        // CORRIGIDO: Removido o localhost:3001, pois as imagens virão da mesma origem agora
+        'img-src': ["'self'", 'data:', 'https:'],
         'object-src': ["'none'"],
-        // A LINHA ERRADA FOI REMOVIDA DAQUI
         'script-src-attr': ["'none'"],
         'worker-src': ["'self'", 'blob:'],
         'style-src': ["'self'", 'https:', "'unsafe-inline'"],
         'script-src': ["'self'", 'https:', "'unsafe-inline'", "'unsafe-eval'"],
         
-        // A LINHA FOI MOVIDA PARA CÁ:
+        // CORRIGIDO: Removida a necessidade de permitir a conexão com o localhost:3001
         'connect-src': [
           "'self'", 
           'https:', 
           'ws:', 
-          'wss:',
-          // Adicione aqui para liberar a conexão com a API em desenvolvimento
-          ...(process.env.NODE_ENV === 'development' ? ['http://localhost:3001'] : [])
+          'wss:'
         ]
       }
     }

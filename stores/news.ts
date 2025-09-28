@@ -7,9 +7,24 @@ interface NewsFilters {
   category?: string
 }
 
+// Helper para converter chaves de snake_case para camelCase
+function toCamelCase(obj: any): any {
+  if (Array.isArray(obj)) {
+    return obj.map(v => toCamelCase(v));
+  } else if (obj !== null && obj.constructor === Object) {
+    return Object.keys(obj).reduce((result, key) => {
+      const camelKey = key.replace(/([-_][a-z])/g, g => g.toUpperCase().replace('_', ''));
+      (result as any)[camelKey] = toCamelCase(obj[key]);
+      return result;
+    }, {});
+  }
+  return obj;
+}
+
 export const useNewsStore = defineStore('news', {
   state: () => ({
     news: [] as News[],
+    featuredNews: [] as News[], // <-- ADICIONADO: Para a página inicial
     currentNews: null as News | null, // Para guardar a notícia ativa (ex: na página de edição)
     isLoading: false,
     error: null as string | null,
@@ -112,6 +127,30 @@ export const useNewsStore = defineStore('news', {
      * @param id - O ID da notícia a ser atualizada.
      * @param newsData - Os novos dados da notícia.
      */
+    async updateNewsStatus(id: number, status: 'published' | 'draft') {
+      this.isLoading = true;
+      try {
+        const { $api } = useNuxtApp();
+        // Chama o endpoint PUT com os novos dados
+        const updatedNews = await $api<News>(`/api/news/${id}`, {
+          method: 'PUT',
+          body: { status }, // Envia apenas o status para ser atualizado
+        });
+  
+        // Atualiza a notícia na lista local para refletir a mudança instantaneamente
+        const index = this.news.findIndex(n => n.id === id);
+        if (index !== -1) {
+          this.news[index] = toCamelCase(updatedNews) as News; // Converte para camelCase
+        }
+  
+        return { success: true, data: updatedNews };
+      } catch (error: any) {
+        console.error('Update news status error:', error);
+        return { success: false, error: error.data?.message || 'Erro ao atualizar status' };
+      } finally {
+        this.isLoading = false;
+      }
+    },
     async updateNews(id: number, newsData: NewsFormData | FormData) {
       this.isLoading = true
       try {
@@ -134,6 +173,22 @@ export const useNewsStore = defineStore('news', {
       } catch (error: any) {
         console.error('Update news error:', error)
         return { success: false, error: error.data?.message || 'Erro ao atualizar notícia' }
+      } finally {
+        this.isLoading = false
+      }
+    },
+    
+    async fetchFeaturedNews() {
+      this.isLoading = true
+      this.error = null
+      try {
+        const { $api } = useNuxtApp()
+        // Pede para a API apenas notícias em destaque, com um limite de 3
+        const responseData = await $api<any[]>(`/api/news?featured=true&limit=3`)
+        this.featuredNews = toCamelCase(responseData) as News[]
+      } catch (error: any) {
+        this.error = error.data?.message || 'Erro ao carregar destaques'
+        console.error('Fetch featured news error:', error)
       } finally {
         this.isLoading = false
       }

@@ -1,167 +1,101 @@
-<template lang="pug">
-  .login-page
-    .login-container
-      // Header
-      header.login-header
-        .logo
-          span L
-        h2.login-title LATECE
-        p.login-subtitle Laboratório de Tecnologia Assistiva
-        p.login-description Acesso ao painel administrativo
-      
-      // Login Form
-      .login-form
-        form(@submit.prevent="handleLogin")
-          // Username Field
-          .form-group
-            label.form-label(for="username") {{ $t('auth.username') }}
-            input.form-control(
-              id="username",
-              v-model="loginForm.username",
-              type="text",
-              :placeholder="$t('auth.usernamePlaceholder')",
-              required,
-              :disabled="isLoading",
-              :class="{ 'is-invalid': errors.username }"
-            )
-            .error-message(v-if="errors.username") {{ errors.username }}
-          
-          // Password Field
-          .form-group
-            label.form-label(for="password") {{ $t('auth.password') }}
-            .password-input
-              input.form-control(
-                id="password",
-                v-model="loginForm.password",
-                :type="showPassword ? 'text' : 'password'",
-                :placeholder="$t('auth.passwordPlaceholder')",
-                required,
-                :disabled="isLoading",
-                :class="{ 'is-invalid': errors.password }"
-              )
-              button.password-toggle(
-                type="button",
-                @click="togglePasswordVisibility",
-                :aria-label="showPassword ? 'Ocultar senha' : 'Mostrar senha'"
-              )
-            .error-message(v-if="errors.password") {{ errors.password }}
-          
-          // Remember Me & Forgot Password
-          .form-group-inline
-            label.remember-me
-              input.remember-checkbox(
-                id="remember",
-                v-model="loginForm.remember",
-                type="checkbox",
-                :disabled="isLoading"
-              )
-              span.remember-label {{ $t('auth.rememberMe') }}
-            a.forgot-link(href="#", @click.prevent="handleForgotPassword") {{ $t('auth.forgotPassword') }}
-          
-          // Submit Button
-          .form-group
-            button.submit-btn(type="submit", :disabled="isLoading")
-              .loading-spinner(v-if="isLoading")
-              span {{ isLoading ? $t('auth.loggingIn') : $t('auth.login') }}
-          
-          // Error Message
-          .form-group(v-if="errorMessage")
-            .error-box
-              span {{ errorMessage }}
-      
-      // Footer
-      footer.login-footer
-        p © {{ new Date().getFullYear() }} LATECE - UFRN
-        p Laboratório de Tecnologia Assistiva
-  </template>
+<template>
+  <div class="login-page">
+    <div class="login-container">
+      <header class="login-header">
+        <div class="logo"><span>L</span></div>
+        <h2 class="login-title">LATECE</h2>
+        <p class="login-subtitle">Laboratório de Tecnologia Assistiva</p>
+        <p class="login-description">Acesso ao painel administrativo</p>
+      </header>
+
+      <div class="login-form">
+        <form @submit.prevent="handleLogin">
+          <div class="form-group">
+            <label class="form-label" for="username">{{ $t('auth.username') }}</label>
+            <input class="form-control" id="username" v-model="loginForm.username" type="text" :placeholder="$t('auth.usernamePlaceholder')" required :disabled="isLoading" :class="{ 'is-invalid': errors.username }" />
+            <div class="error-message" v-if="errors.username">{{ errors.username }}</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="password">{{ $t('auth.password') }}</label>
+            <div class="password-input">
+              <input class="form-control" id="password" v-model="loginForm.password" :type="showPassword ? 'text' : 'password'" :placeholder="$t('auth.passwordPlaceholder')" required :disabled="isLoading" :class="{ 'is-invalid': errors.password }" />
+              <button class="password-toggle" type="button" @click="togglePasswordVisibility" :aria-label="showPassword ? 'Ocultar senha' : 'Mostrar senha'">
+                 <Icon :name="showPassword ? 'mdi:eye-off' : 'mdi:eye'" />
+              </button>
+            </div>
+            <div class="error-message" v-if="errors.password">{{ errors.password }}</div>
+          </div>
+
+          <div class="form-group">
+            <button class="submit-btn" type="submit" :disabled="isLoading">
+              <div class="loading-spinner" v-if="isLoading"></div>
+              <span>{{ isLoading ? $t('auth.loggingIn') : $t('auth.login') }}</span>
+            </button>
+          </div>
+
+          <div class="form-group" v-if="errorMessage">
+            <div class="error-box">
+              <span>{{ errorMessage }}</span>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <footer class="login-footer">
+        <p>© {{ new Date().getFullYear() }} LATECE - UFRN</p>
+        <p>Laboratório de Tecnologia Assistiva</p>
+      </footer>
+    </div>
+  </div>
+</template>
 
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth'
-// Meta tags
+
 useHead({
   title: 'Login - Portal LATECE',
-  meta: [
-    { name: 'description', content: 'Acesso ao painel administrativo do Portal LATECE' }
-  ]
+  meta: [{ name: 'description', content: 'Acesso ao painel administrativo do Portal LATECE' }]
 })
 
-// Stores
 const authStore = useAuthStore()
 const router = useRouter()
 
-// Reactive data
-const loginForm = ref({
-  username: '',
-  password: '',
-  remember: false
-})
-
+const loginForm = ref({ username: '', password: '' })
 const showPassword = ref(false)
 const isLoading = ref(false)
 const errorMessage = ref('')
-const errors = ref({
-  username: '',
-  password: ''
-})
+const errors = ref({ username: '', password: '' })
 
-// Methods
 const togglePasswordVisibility = () => {
   showPassword.value = !showPassword.value
 }
 
-const validateForm = () => {
-  errors.value = {
-    username: '',
-    password: ''
-  }
-  
-  let isValid = true
-  
-  if (!loginForm.value.username.trim()) {
-    errors.value.username = 'Nome de usuário é obrigatório'
-    isValid = false
-  }
-  
-  if (!loginForm.value.password) {
-    errors.value.password = 'Senha é obrigatória'
-    isValid = false
-  } else if (loginForm.value.password.length < 6) {
-    errors.value.password = 'Senha deve ter pelo menos 6 caracteres'
-    isValid = false
-  }
-  
-  return isValid
-}
-
 const handleLogin = async () => {
-  if (!validateForm()) {
+  // Validação simples (pode ser melhorada)
+  if (!loginForm.value.username || !loginForm.value.password) {
+    errorMessage.value = 'Por favor, preencha todos os campos.'
     return
   }
-  
+
   isLoading.value = true
   errorMessage.value = ''
   
-  try {
-    await authStore.login({
-      username: loginForm.value.username,
-      password: loginForm.value.password
-    })
-    
-    // Redirect to admin panel
+  // CORRIGIDO: Trata a resposta da action da store
+  const result = await authStore.login({
+    username: loginForm.value.username,
+    password: loginForm.value.password
+  })
+  
+  if (result.success) {
     await router.push('/admin')
-  } catch (error: any) {
-    errorMessage.value = error.message || 'Erro ao fazer login. Tente novamente.'
-  } finally {
-    isLoading.value = false
+  } else {
+    errorMessage.value = result.error || 'Ocorreu um erro inesperado.'
   }
+  
+  isLoading.value = false
 }
 
-const handleForgotPassword = () => {
-  // TODO: Implement forgot password functionality
-  alert('Funcionalidade de recuperação de senha será implementada em breve.')
-}
-
-// Redirect if already authenticated
 onMounted(() => {
   if (authStore.isAuthenticated) {
     router.push('/admin')

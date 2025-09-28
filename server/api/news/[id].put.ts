@@ -8,12 +8,35 @@ export default defineEventHandler(async (event) => {
   }
   
   const newsId = getRouterParam(event, 'id');
-  const { title, content, status } = await readBody(event);
+  const body = await readBody(event);
 
-  const result = await query(
-    'UPDATE news SET title = $1, content = $2, status = $3 WHERE id = $4 RETURNING *',
-    [title, content, status, newsId]
-  );
+  // Lógica para atualização parcial (patch)
+  const fields: string[] = [];
+  const values: any[] = [];
+  let paramIndex = 1;
+
+  // Adiciona apenas os campos que vieram no corpo da requisição
+  for (const [key, value] of Object.entries(body)) {
+    if (['title', 'content', 'status', 'category', 'excerpt', 'image_url'].includes(key)) {
+      fields.push(`${key} = $${paramIndex}`);
+      values.push(value);
+      paramIndex++;
+    }
+  }
+
+  if (fields.length === 0) {
+    throw createError({ statusCode: 400, statusMessage: 'Nenhum campo para atualizar fornecido.' });
+  }
+
+  values.push(newsId); // Adiciona o ID da notícia como último parâmetro
+
+  const updateQuery = `UPDATE news SET ${fields.join(', ')} WHERE id = $${paramIndex} RETURNING *`;
+  
+  const result = await query(updateQuery, values);
+
+  if (result.rows.length === 0) {
+    throw createError({ statusCode: 404, statusMessage: 'Notícia não encontrada.' });
+  }
   
   return result.rows[0];
 });

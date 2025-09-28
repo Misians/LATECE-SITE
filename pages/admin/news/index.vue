@@ -76,6 +76,14 @@
               <td>{{ formatDate(news.updatedAt) }}</td>
               <td>
                 <div class="action-buttons">
+                  <button 
+                    v-if="news.status === 'draft'" 
+                    class="action-btn publish-btn" 
+                    @click="publishNews(news)" 
+                    :aria-label="`Publicar notícia ${news.title}`"
+                  >
+                    <Icon name="mdi:publish" />
+                  </button>
                   <button class="action-btn" @click="viewNews(news)" :aria-label="`Ver notícia ${news.title}`">
                     <Icon name="mdi:eye" />
                   </button>
@@ -145,7 +153,12 @@ useHead({
 definePageMeta({
   middleware: 'auth'
 })
-
+const publishNews = async (news: any) => {
+  if (confirm(`Tem certeza que deseja publicar a notícia "${news.title}"?`)) {
+    // A store cuidará de atualizar o status e a lista
+    await newsStore.updateNewsStatus(news.id, 'published');
+  }
+}
 // Stores
 const newsStore = useNewsStore()
 

@@ -4,9 +4,9 @@ import type { User, LoginCredentials } from '@/types/auth'
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     user: null as User | null,
-    token: null as string | null,
+    token: useCookie('auth_token', { maxAge: 60 * 60 * 24 }), // <-- CORRIGIDO: Usa useCookie
     isAuthenticated: false,
-    isLoading: false
+    isLoading: false,
   }),
 
   getters: {
@@ -27,33 +27,25 @@ export const useAuthStore = defineStore('auth', {
       this.isLoading = true
       try {
         const { $api } = useNuxtApp()
-        const response = await $api('/auth/login', {
+        const response = await $api<{ token: string, user: User }>('/api/auth/login', {
           method: 'POST',
           body: credentials
-        })
+        });
         
-        // Assumindo que a resposta bem-sucedida tem user e token
-        this.user = response.data.user
-        this.token = response.data.token
-        this.isAuthenticated = true
-        
-        // Store token in localStorage
-        if (process.client) {
-          // Garante que o token não é nulo antes de salvar
-          if (this.token) {
-            localStorage.setItem('auth_token', this.token)
-          }
-        }
-        
-        return { success: true }
+        this.user = response.user;
+        this.token = response.token; // Salva o token no cookie
+        this.isAuthenticated = true;
+
+        return { success: true };
       } catch (error: any) {
-        console.error('Login error:', error)
+        console.error('Login error:', error);
+        this.logout(); // Limpa o estado em caso de falha
         return { 
           success: false, 
-          error: error.data?.error?.message || 'Erro ao fazer login' 
-        }
+          error: error.data?.statusMessage || 'Erro ao fazer login' 
+        };
       } finally {
-        this.isLoading = false
+        this.isLoading = false;
       }
     },
 

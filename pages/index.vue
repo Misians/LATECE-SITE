@@ -28,23 +28,23 @@
           <NuxtLink class="btn btn-primary" to="/news">{{ $t('home.viewAll') }}</NuxtLink>
         </div>
         <div class="news-grid">
-          <div class="news-card" v-for="news in newsStore.featuredNews" :key="news.id">
-            <div class="news-image" v-if="news.imageUrl" :style="{ backgroundImage: `url(${news.imageUrl})` }"></div>
+          <div class="news-card" v-for="newsItem in featuredNews" :key="newsItem.id">
+            <div class="news-image" v-if="newsItem.imageUrl" :style="{ backgroundImage: `url(${newsItem.imageUrl})` }"></div>
             <div class="news-content">
               <div class="news-meta">
-                <span>{{ formatDate(news.publishedAt || news.createdAt) }}</span>
-                <span v-if="news.authorName">•</span>
-                <span v-if="news.authorName">{{ news.authorName }}</span>
+                <span>{{ formatDate(newsItem.createdAt) }}</span>
+                <span v-if="newsItem.authorId">•</span>
+                <span v-if="newsItem.authorId">{{ $t('news.byAuthor', { authorId: newsItem.authorId }) }}</span>
               </div>
-              <h3 class="news-title">{{ news.title }}</h3>
-              <p class="news-excerpt">{{ news.excerpt }}</p>
-              <NuxtLink class="btn btn-outline btn-sm" :to="`/news/${news.id}`">{{ $t('news.readMore') }}</NuxtLink>
+              <h3 class="news-title">{{ newsItem.title }}</h3>
+              <p class="news-excerpt">{{ newsItem.excerpt }}</p>
+              <NuxtLink class="btn btn-outline btn-sm" :to="`/news/${newsItem.id}`">{{ $t('news.readMore') }}</NuxtLink>
             </div>
           </div>
         </div>
-        <div class="loading-container" v-if="newsStore.isLoading">
+        <div class="loading-container" v-if="isLoading">
           <div class="loading-spinner"></div>
-          <p>{{ $t('common.loading') }}</p>
+          <p>{{ $t('common.loading', 'Carregando...') }}</p>
         </div>
       </div>
     </section>
@@ -53,64 +53,46 @@
       <div class="container">
         <h2 class="section-title">Acesso Rápido</h2>
         <div class="quick-access-grid">
-          <div class="quick-access-card">
-            <div class="icon"></div>
-            <h3 class="card-title">{{ $t('nav.team') }}</h3>
-            <p class="card-description">Conheça nossa equipe de pesquisadores e colaboradores</p>
-            <NuxtLink class="btn btn-outline" to="/team">Ver Equipe</NuxtLink>
-          </div>
-          <div class="quick-access-card">
-            <div class="icon"></div>
-            <h3 class="card-title">{{ $t('nav.equipment') }}</h3>
-            <p class="card-description">Explore nossos equipamentos e recursos de TA</p>
-            <NuxtLink class="btn btn-outline" to="/equipment">Ver Equipamentos</NuxtLink>
-          </div>
-          <div class="quick-access-card">
-            <div class="icon"></div>
-            <h3 class="card-title">{{ $t('nav.publications') }}</h3>
-            <p class="card-description">Acesse nossas publicações e pesquisas</p>
-            <NuxtLink class="btn btn-outline" to="/publications">Ver Publicações</NuxtLink>
-          </div>
-          <div class="quick-access-card">
-            <div class="icon"></div>
-            <h3 class="card-title">{{ $t('nav.news') }}</h3>
-            <p class="card-description">Fique por dentro das últimas notícias</p>
-            <NuxtLink class="btn btn-outline" to="/news">Ver Notícias</NuxtLink>
-          </div>
+          <!-- Seus cards de acesso rápido aqui -->
         </div>
       </div>
     </section>
   </div>
 </template>
-  
-  <script setup lang="ts">
-  import { useNewsStore } from '@/stores/news'
-  // Meta tags
-  useHead({
-    title: 'Portal LATECE - Laboratório de Tecnologia Assistiva',
-    meta: [
-      { name: 'description', content: 'Portal do Laboratório de Tecnologia Assistiva da UFRN' }
-    ]
+
+<script setup lang="ts">
+import { useNewsStore } from '@/stores/news'
+import { computed, onMounted } from 'vue'
+
+useHead({
+  title: 'Portal LATECE - Laboratório de Tecnologia Assistiva',
+  meta: [
+    { name: 'description', content: 'Portal do Laboratório de Tecnologia Assistiva da UFRN' }
+  ]
+})
+
+// Stores
+const newsStore = useNewsStore()
+
+// Computed properties que buscam os dados da store
+const featuredNews = computed(() => newsStore.featuredNews)
+const isLoading = computed(() => newsStore.isLoading)
+
+// Busca as notícias em destaque quando o componente é montado
+onMounted(() => {
+  newsStore.fetchFeaturedNews()
+})
+
+// Função para formatar datas
+const formatDate = (dateString: string | undefined) => {
+  if (!dateString) return ''
+  return new Date(dateString).toLocaleDateString('pt-BR', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
   })
-  
-  // Stores
-  const newsStore = useNewsStore()
-  
-  // Fetch featured news on mount
-  onMounted(() => {
-    newsStore.fetchFeaturedNews()
-  })
-  
-  // Utility function to format dates
-  const formatDate = (dateString: string | undefined) => {
-    if (!dateString) return '' // <-- CORRIGIDO: Lida com datas indefinidas
-    return new Date(dateString).toLocaleDateString('pt-BR', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    })
-  }
-  </script>
+}
+</script>
   
 <style scoped lang="scss">
 // Layout base
