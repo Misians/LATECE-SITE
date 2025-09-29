@@ -61,7 +61,7 @@
     <div v-else class="not-found-container">
       <h2>Notícia não encontrada</h2>
       <p>A notícia que você está procurando não existe ou foi removida.</p>
-      <NuxtLink to="/noticias">Voltar para a lista de notícias</NuxtLink>
+      <NuxtLink to="/news">Voltar para a lista de notícias</NuxtLink>
     </div>
   </main>
 </template>
