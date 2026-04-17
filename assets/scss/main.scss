@@ -1,0 +1,463 @@
+// Import variables
+@use 'variables' as *;
+
+// Base styles
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: $font-secondary;
+  font-weight: $font-regular;
+  line-height: 1.6;
+  color: $dark-gray;
+  background-color: $white;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// Typography
+h1, h2, h3, h4, h5, h6 {
+  font-family: $font-primary;
+  font-weight: $font-bold;
+  line-height: 1.2;
+  margin: 0 0 $spacing-md 0;
+  color: $primary-blue;
+}
+
+h1 {
+  font-size: 2.5rem;
+  font-weight: $font-extrabold;
+  
+  @media (max-width: $breakpoint-md) {
+    font-size: 2rem;
+  }
+}
+
+h2 {
+  font-size: 2rem;
+  font-weight: $font-bold;
+  
+  @media (max-width: $breakpoint-md) {
+    font-size: 1.75rem;
+  }
+}
+
+h3 {
+  font-size: 1.5rem;
+  font-weight: $font-semibold;
+  
+  @media (max-width: $breakpoint-md) {
+    font-size: 1.25rem;
+  }
+}
+
+h4 {
+  font-size: 1.25rem;
+  font-weight: $font-semibold;
+}
+
+h5 {
+  font-size: 1.125rem;
+  font-weight: $font-medium;
+}
+
+h6 {
+  font-size: 1rem;
+  font-weight: $font-medium;
+}
+
+p {
+  margin: 0 0 $spacing-md 0;
+  line-height: 1.7;
+}
+
+a {
+  color: $primary-blue;
+  text-decoration: none;
+  transition: color $transition-fast;
+  
+  &:hover {
+    color: $light-blue;
+  }
+  
+  &:focus {
+    outline: 2px solid $primary-blue;
+    outline-offset: 2px;
+  }
+}
+
+// Buttons
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-sm $spacing-lg;
+  font-family: $font-primary;
+  font-weight: $font-semibold;
+  font-size: 1rem;
+  line-height: 1.5;
+  text-align: center;
+  text-decoration: none;
+  border: 2px solid transparent;
+  border-radius: $radius-md;
+  cursor: pointer;
+  transition: all $transition-fast;
+  user-select: none;
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  &:focus {
+    outline: none;
+    box-shadow: $focus-ring;
+  }
+}
+
+.btn-primary {
+  background: $primary-gradient;
+  color: $white;
+  border-color: $primary-blue;
+  
+  &:hover:not(:disabled) {
+    background: $primary-blue;
+    transform: translateY(-1px);
+    box-shadow: $shadow-lg;
+  }
+}
+
+.btn-secondary {
+  background: $white;
+  color: $primary-blue;
+  border-color: $primary-blue;
+  
+  &:hover:not(:disabled) {
+    background: $primary-blue;
+    color: $white;
+  }
+}
+
+.btn-outline {
+  background: transparent;
+  color: $primary-blue;
+  border-color: $primary-blue;
+  
+  &:hover:not(:disabled) {
+    background: $primary-blue;
+    color: $white;
+  }
+}
+
+.btn-lg {
+  padding: $spacing-md $spacing-xl;
+  font-size: 1.125rem;
+}
+
+.btn-sm {
+  padding: $spacing-xs $spacing-md;
+  font-size: 0.875rem;
+}
+
+// Cards
+.card {
+  background: $white;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-md;
+  overflow: hidden;
+  transition: all $transition-normal;
+  
+  &:hover {
+    box-shadow: $shadow-xl;
+    transform: translateY(-2px);
+  }
+}
+
+.card-header {
+  padding: $spacing-lg;
+  border-bottom: 1px solid rgba($primary-blue, 0.1);
+  background: rgba($primary-blue, 0.05);
+}
+
+.card-body {
+  padding: $spacing-lg;
+}
+
+.card-footer {
+  padding: $spacing-lg;
+  border-top: 1px solid rgba($primary-blue, 0.1);
+  background: rgba($primary-blue, 0.02);
+}
+
+// Forms
+.form-group {
+  margin-bottom: $spacing-lg;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: $spacing-sm;
+  font-family: $font-primary;
+  font-weight: $font-semibold;
+  color: $dark-gray;
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  padding: $spacing-sm $spacing-md;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: $dark-gray;
+  background-color: $white;
+  border: 2px solid rgba($primary-blue, 0.2);
+  border-radius: $radius-md;
+  transition: border-color $transition-fast, box-shadow $transition-fast;
+  
+  &:focus {
+    outline: none;
+    border-color: $primary-blue;
+    box-shadow: $focus-ring;
+  }
+  
+  &::placeholder {
+    color: rgba($dark-gray, 0.6);
+  }
+}
+
+.form-textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+// Utilities
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+.text-primary { color: $primary-blue; }
+.text-secondary { color: $light-blue; }
+.text-success { color: $moss-green; }
+.text-warning { color: $mustard; }
+.text-danger { color: $terracotta; }
+.text-muted { color: rgba($dark-gray, 0.6); }
+
+.bg-primary { background-color: $primary-blue; }
+.bg-light { background-color: rgba($primary-blue, 0.05); }
+.bg-gradient { background: $primary-gradient; }
+
+.d-none { display: none; }
+.d-block { display: block; }
+.d-flex { display: flex; }
+.d-grid { display: grid; }
+
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.justify-around { justify-content: space-around; }
+
+.align-center { align-items: center; }
+.align-start { align-items: flex-start; }
+.align-end { align-items: flex-end; }
+
+.w-full { width: 100%; }
+.h-full { height: 100%; }
+
+.m-0 { margin: 0; }
+.mt-0 { margin-top: 0; }
+.mb-0 { margin-bottom: 0; }
+.ml-0 { margin-left: 0; }
+.mr-0 { margin-right: 0; }
+
+.p-0 { padding: 0; }
+.pt-0 { padding-top: 0; }
+.pb-0 { padding-bottom: 0; }
+.pl-0 { padding-left: 0; }
+.pr-0 { padding-right: 0; }
+
+// Responsive utilities
+@media (max-width: $breakpoint-md) {
+  .d-md-none { display: none; }
+  .d-md-block { display: block; }
+  .d-md-flex { display: flex; }
+}
+
+@media (max-width: $breakpoint-lg) {
+  .d-lg-none { display: none; }
+  .d-lg-block { display: block; }
+  .d-lg-flex { display: flex; }
+}
+
+// Accessibility
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: $primary-blue;
+  color: $white;
+  padding: 8px;
+  text-decoration: none;
+  z-index: $z-tooltip;
+  
+  &:focus {
+    top: 6px;
+  }
+}
+
+// High contrast mode
+@media (prefers-contrast: high) {
+  .btn {
+    border-width: 3px;
+  }
+  
+  .form-control {
+    border-width: 3px;
+  }
+  
+  .card {
+    border: 2px solid $primary-blue;
+  }
+}
+
+// Reduced motion
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+// Keyboard navigation styles
+.keyboard-navigation {
+  *:focus {
+    outline: 2px solid $primary-blue !important;
+    outline-offset: 2px !important;
+  }
+}
+
+// High contrast mode
+.high-contrast {
+  * {
+    background-color: white !important;
+    color: black !important;
+    border-color: black !important;
+  }
+  
+  .btn {
+    border-width: 3px !important;
+    font-weight: bold !important;
+  }
+  
+  .form-control {
+    border-width: 3px !important;
+  }
+  
+  .card {
+    border: 3px solid black !important;
+  }
+  
+  .nav-link {
+    font-weight: bold !important;
+  }
+  
+  // Override specific colors for better contrast
+  .text-primary-blue {
+    color: black !important;
+  }
+  
+  .bg-primary-blue {
+    background-color: black !important;
+    color: white !important;
+  }
+  
+  .bg-light-blue {
+    background-color: #f0f0f0 !important;
+    color: black !important;
+  }
+}
+
+// Focus styles for better accessibility
+*:focus {
+  outline: 2px solid $primary-blue;
+  outline-offset: 2px;
+}
+
+// Skip link styles
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: $primary-blue;
+  color: white;
+  padding: 8px 16px;
+  text-decoration: none;
+  border-radius: 4px;
+  z-index: $z-tooltip;
+  font-weight: bold;
+  
+  &:focus {
+    top: 6px;
+  }
+}
+
+// Screen reader only content
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// ARIA live regions
+[aria-live] {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+// Focus trap for modals
+.focus-trap {
+  &:focus {
+    outline: none;
+  }
+}
+
+// High contrast focus indicators
+@media (prefers-contrast: high) {
+  *:focus {
+    outline-width: 3px !important;
+  }
+  
+  .btn:focus {
+    outline-width: 4px !important;
+  }
+}
